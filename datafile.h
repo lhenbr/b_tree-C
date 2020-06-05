@@ -14,7 +14,7 @@
 FILE* start_datafile();
 long insert_register(RECORD* record,FILE* data);
 RECORD* search_record(long RNN,FILE* data);
-RECORD* create_record();
+RECORD* read_record();
 void print_record(RECORD* record);
 void close_datafile(FILE* data);
 #endif

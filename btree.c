@@ -35,6 +35,13 @@ void save_page(PAGE *page, BTREE *tree)
     //free(page);
 }
 //inicia uma arvore
+KEY_VALUE* key_value_creator(int NUSP,long RNN){
+    KEY_VALUE* key = malloc(sizeof(KEY_VALUE));
+    key->NUSP = NUSP;
+    key->RNN = RNN;
+    return key;
+
+}
 BTREE *start_tree()
 { //Posivel bug, ao ler a informação do arquivo o ponteiro file precisar ser refeito
     BTREE *btree = malloc(sizeof(BTREE));
@@ -185,7 +192,7 @@ void split(BTREE *tree, PAGE *father, PAGE *page) //faz o split da page,promoven
     free(father);
     free(page);
 }
-void insert(BTREE *tree, KEY_VALUE *key)
+void insert_tree(BTREE *tree, KEY_VALUE *key)
 {
     PAGE *root = load_page(tree->root, tree);
     if (root->is_leaf)
@@ -205,8 +212,24 @@ void insert(BTREE *tree, KEY_VALUE *key)
     save_page(root, tree);
     free(root);
 }
+long binary_serch(KEY_VALUE arr[], int l, int r, int x) // inspirado em https://www.geeksforgeeks.org/binary-search/
+{
+    if (r >= l)
+    {
+        int mid = l + (r - l) / 2;
 
-long search(BTREE *tree, int NUSP)
+        if (arr[mid].NUSP == x)
+            return arr[mid].RNN;
+
+        if (arr[mid].NUSP > x)
+            return binary_search(arr, l, mid - 1, x);
+
+        return binary_search(arr, mid + 1, r, x);
+    }
+
+    return -1;
+}
+long search_tree(BTREE *tree, int NUSP)
 {
     long child = tree->root;
     PAGE *page;
@@ -214,16 +237,16 @@ long search(BTREE *tree, int NUSP)
     while (child != -1)
     {
         page = load_page(child, tree);
-        RNN = b_search(page, NUSP);
+        RNN = binary_search(page, NUSP);
         if (RNN != -1)
         {
-        free(page);
+            free(page);
             return RNN;
         }
         else
         {
-            child = find_child(page,NUSP);
-        free(page);
+            child = find_child(page, NUSP);
+            free(page);
         }
     }
     return -1;
